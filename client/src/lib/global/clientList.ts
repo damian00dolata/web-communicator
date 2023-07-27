@@ -4,7 +4,7 @@ import { clientList } from "../clientListStore";
 class ClientList {
   private static instance: ClientList;
 
-  private clientList: Array<Client> = new Array();
+  private clientList: Array<String> = new Array();
 
   private constructor() { }
 
@@ -15,11 +15,13 @@ class ClientList {
     return ClientList.instance;
 }
 
-  public getClientList(): Array<Client> {
+  public getClientList(): Array<String> {
     return this.clientList;
   }
 
   public setClientList(currentClients: string): void {
+    this.clientList = [];
+
     var jsonData = JSON.parse(currentClients);
     
     for (var i = 0; i < jsonData.length; i++) {

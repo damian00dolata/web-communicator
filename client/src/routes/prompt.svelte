@@ -1,7 +1,7 @@
 <script lang="ts">
- 	import { Client } from "../lib/client";
+ 	import type { Client } from "../lib/client";
   import { fade } from 'svelte/transition';
-
+  //import { userId } from '../lib/stores/store';
   export let client: Client;
 
   export let nickname: string = '';
@@ -11,10 +11,10 @@
   function createUser() {
     client.setClientName(nickname);
     client.createSocket();
+    //userId.set(client.getClientSocket());
     usrCreated = true;
-    let _cli = new Client(client.getClientName(), client.getClientSocket());
-    //console.log('_cli: ' + JSON.stringify(_cli));
-    client.getClientSocket().emit('addClient', { clientName: _cli.getClientName(), clientSocket: JSON.stringify(_cli.getClientSocket())});
+    //client.getClientSocket().emit('generateUserId');
+    client.getClientSocket().emit('addClient', client.getClientName());
     console.log('Your name is ' + client.getClientName() + "\nYour token is: " + client.getClientSocket());
   }
 

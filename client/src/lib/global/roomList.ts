@@ -23,6 +23,8 @@ class RoomList implements IObservable {
   }
 
   public setRoomList(availableRooms: string): void {
+    this.roomList = [];
+
     var jsonData = JSON.parse(availableRooms);
     
     for (var i = 0; i < jsonData.length; i++) {

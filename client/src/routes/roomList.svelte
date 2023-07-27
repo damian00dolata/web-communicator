@@ -1,9 +1,19 @@
 <script lang="ts">
-	import { Room } from "../lib/room";
+  import { Room } from "../lib/room";
   import type { Client } from "../lib/client";
 	import { RoomList } from "$lib/global/roomList";
   import { roomList } from "../lib/roomListStore";
+  import Chatroom from "./chatroom.svelte";
+  import { userId, lastRoomCreatedId } from "../lib/stores/store";
+  import { get } from 'svelte/store';
+
   export let client: Client;
+
+  let isRoomOpen: boolean = false;
+
+  let roomId: string = '';
+
+  client.getClientSocket().emit('generateRoomList');
 
   let availableRooms: Array<Room> = new Array();
   availableRooms = RoomList.getInstance().getRoomList();
@@ -15,8 +25,17 @@
   let maxUsers: number;
 
   function addRoom() {
-    var room = new Room(`${roomName}`, 0, maxUsers);
+    var room = new Room('', `${roomName}`, 0, maxUsers, get(userId));
     client.getClientSocket().emit('addRoom', JSON.stringify(room));
+    //console.log(get(lastRoomCreatedId));
+    joinRoom(get(lastRoomCreatedId));
+  }
+
+  function joinRoom(id: string) {
+    roomId = id;
+    console.log("joined " + roomId);
+    client.getClientSocket().emit('joinedRoom', roomId, get(userId));
+    isRoomOpen = true;
   }
 
   const onKeyPress = (e: { charCode: any; }) => {
@@ -34,9 +53,17 @@
     </button>
   </div>
   <div class="roomList">
-    {#each availableRooms as room}
-      <div class="room">{room.roomName} ({room.currentUsers}/{room.maxUsers})</div>
-    {/each}
+    {#if isRoomOpen}
+      <Chatroom client={client} bind:isRoomOpen={isRoomOpen} bind:roomId={roomId}/>
+    {:else}
+      {#each availableRooms as room}
+        <div class="room">[{room.roomId}] {room.roomName} ({room.currentUsers}/{room.maxUsers}) 
+          <button on:click={() => joinRoom(room.roomId)}>
+            Join
+          </button>
+        </div>
+      {/each}
+    {/if}
   </div>
 </div>
   
@@ -89,12 +116,16 @@
   }
 
   .roomList .room {
-    display: grid;
+    display: block;
     width: 95%;
     height: 25px;
     align-content: center;
     justify-content: center;
     font-size: 14px;
+  }
+
+  .room button {
+    width: 40px;
   }
 
   .roomList div:not(:first-child) {

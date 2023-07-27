@@ -1,6 +1,9 @@
 import { Socket, io } from "socket.io-client";
 import { RoomList } from "./global/roomList";
 import { ClientList } from "./global/clientList";
+import { userId, lastRoomCreatedId } from "./stores/store";
+import { get } from 'svelte/store';
+
 
 class Client {
   private clientName: string;
@@ -23,11 +26,21 @@ class Client {
     });
 
     this.clientSocket.on('roomCreated', (e: any) => {
-      RoomList.getInstance().setRoomList(e);
+      //RoomList.getInstance().setRoomList(e);
+      lastRoomCreatedId.set(e);
     });
 
     this.clientSocket.on('clientCreated', (e: any) => {
       ClientList.getInstance().setClientList(e);
+    });
+
+    this.clientSocket.on('userIdGenerated', (e: any) => {
+      userId.set(e);
+      console.log("your id is: " + get(userId));
+    });
+
+    this.clientSocket.on('sendRoomList', (e: any) => {
+      RoomList.getInstance().setRoomList(e);
     });
   }
 

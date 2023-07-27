@@ -1,9 +1,10 @@
 <script lang="ts">
-  import type { Client } from "../lib/client";
 	import { ClientList } from "$lib/global/clientList";
   import { clientList } from "../lib/clientListStore";
 
-  let currentClients: Array<Client> = new Array();
+  let clientRef: any;
+
+  let currentClients: Array<String> = new Array();
   currentClients = ClientList.getInstance().getClientList();
   clientList.subscribe(value => {
     currentClients = value;
@@ -14,9 +15,9 @@
   <div class="clientHeader">
     Client list
   </div>
-  <div class="clientList">
+  <div class="clientList" bind:this={clientRef}>
     {#each currentClients as client}
-      <div class="client">{client.getClientName}</div>
+      <div class="client">{client}</div>
     {/each}
   </div>
 </div>
