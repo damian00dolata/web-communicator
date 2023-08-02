@@ -1,0 +1,7 @@
+class RoomReturn:
+    def __init__(self, roomId, roomName, currentUsers, maxUsers, roomOwner):
+        self.roomId:str = roomId
+        self.roomName: str = roomName
+        self.currentUsers: int = currentUsers
+        self.maxUsers: int = maxUsers
+        self.roomOwner: int = roomOwner

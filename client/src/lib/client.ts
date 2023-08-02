@@ -1,7 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import { RoomList } from "./global/roomList";
 import { ClientList } from "./global/clientList";
-import { userId, lastRoomCreatedId } from "./stores/store";
+import { userId, lastRoomCreatedId, isRoomOpened } from "./stores/store";
 import { get } from 'svelte/store';
 
 
@@ -28,6 +28,8 @@ class Client {
     this.clientSocket.on('roomCreated', (e: any) => {
       //RoomList.getInstance().setRoomList(e);
       lastRoomCreatedId.set(e);
+      this.clientSocket.emit('joinedRoom', e, get(userId));
+      isRoomOpened.set(true);
     });
 
     this.clientSocket.on('clientCreated', (e: any) => {
@@ -42,6 +44,14 @@ class Client {
     this.clientSocket.on('sendRoomList', (e: any) => {
       RoomList.getInstance().setRoomList(e);
     });
+
+    // this.clientSocket.on('returnMessageList', (e: any, f: any) => {
+    //   // userId.set(e);
+    //   // console.log("your id is: " + get(userId));
+    //   console.log("Messages: " + e);
+    //   console.log("Room ID: " + f);
+      
+    // });
   }
 
   public createSocket() {

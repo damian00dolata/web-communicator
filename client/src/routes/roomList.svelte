@@ -4,22 +4,30 @@
 	import { RoomList } from "$lib/global/roomList";
   import { roomList } from "../lib/roomListStore";
   import Chatroom from "./chatroom.svelte";
-  import { userId, lastRoomCreatedId } from "../lib/stores/store";
+  import { userId, lastRoomCreatedId, isRoomOpened } from "../lib/stores/store";
   import { get } from 'svelte/store';
 
   export let client: Client;
 
-  let isRoomOpen: boolean = false;
+  let isRoomOpen: boolean;
 
   let roomId: string = '';
-
-  client.getClientSocket().emit('generateRoomList');
 
   let availableRooms: Array<Room> = new Array();
   availableRooms = RoomList.getInstance().getRoomList();
   roomList.subscribe(value => {
     availableRooms = value;
+  });
+
+  isRoomOpened.subscribe(value => {
+    isRoomOpen = value;
+  });
+
+  lastRoomCreatedId.subscribe(value => {
+    roomId = get(lastRoomCreatedId);
   })
+
+  client.getClientSocket().emit('generateRoomList');  
   let roomName: string = '';
 
   let maxUsers: number;
@@ -27,15 +35,11 @@
   function addRoom() {
     var room = new Room('', `${roomName}`, 0, maxUsers, get(userId));
     client.getClientSocket().emit('addRoom', JSON.stringify(room));
-    //console.log(get(lastRoomCreatedId));
-    joinRoom(get(lastRoomCreatedId));
   }
 
   function joinRoom(id: string) {
-    roomId = id;
-    console.log("joined " + roomId);
-    client.getClientSocket().emit('joinedRoom', roomId, get(userId));
-    isRoomOpen = true;
+    client.getClientSocket().emit('joinedRoom', id, get(userId));
+    isRoomOpened.set(true);
   }
 
   const onKeyPress = (e: { charCode: any; }) => {
@@ -54,7 +58,7 @@
   </div>
   <div class="roomList">
     {#if isRoomOpen}
-      <Chatroom client={client} bind:isRoomOpen={isRoomOpen} bind:roomId={roomId}/>
+      <Chatroom client={client} bind:roomId={roomId} bind:isRoomOpen={isRoomOpen}/>
     {:else}
       {#each availableRooms as room}
         <div class="room">[{room.roomId}] {room.roomName} ({room.currentUsers}/{room.maxUsers}) 

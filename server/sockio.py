@@ -1,10 +1,13 @@
 import json
 import socketio
+# import sqlite3
+# from sqlite3 import Error
 
 import room
 from room import Room
 import client
 import message as mess
+from roomReturn import RoomReturn
 
 sio_server = socketio.AsyncServer(
   async_mode='asgi',
@@ -35,8 +38,8 @@ async def addRoom(sid, data):
   print(_room.roomId)
   #jsonStr = json.dumps([obj.__dict__ for obj in room.roomList])
   #print(f'{jsonStr} of type {type(jsonStr)}')
+  await sio_server.emit('roomCreated', _room.roomId, to=sid)
   await generateRoomList(sid)
-  await sio_server.emit('roomCreated', _room.roomId)
 
 @sio_server.event
 async def addClient(sid, data):
@@ -83,14 +86,29 @@ async def sendMessage(sid, clientName, message, roomId):
   for r in room.roomList:
     if r.roomId == roomId:
       r.messages.append(_message)
-      jsonStr = json.dumps([obj.__dict__ for obj in r.messages])
-  print("messages: ", jsonStr)
+      #jsonStr = json.dumps([obj.__dict__ for obj in r.messages])
+  #print("messages: ", jsonStr)
+  await getMessages(sid, roomId)
   
-  #await sio_server.emit('returnMessageList', jsonStr)
+  #await sio_server.emit('returnMessageList', jsonStr, roomId)
 
 @sio_server.event
+async def getMessages(sid, roomId):
+  jsonStr = ''
+  for r in room.roomList:
+    if r.roomId == roomId:
+      jsonStr = json.dumps([obj.__dict__ for obj in r.messages])
+  #print("messages: ", jsonStr)
+  await sio_server.emit('returnMessageList', data=(jsonStr, roomId))
+  
+@sio_server.event
 async def generateRoomList(sid):
-  jsonStr = json.dumps([obj.__dict__ for obj in room.roomList])
+  #print([obj.__dict__ for obj in room.roomList])
+  roomReturns: RoomReturn = []
+  for r in room.roomList:
+    _r = RoomReturn(r.roomId, r.roomName, r.currentUsers, r.maxUsers, r.roomOwner)
+    roomReturns.append(_r)
+  jsonStr = json.dumps([obj.__dict__ for obj in roomReturns])
   await sio_server.emit('sendRoomList', jsonStr)
 
 # @sio_server.event
