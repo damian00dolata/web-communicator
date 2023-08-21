@@ -2,9 +2,8 @@
 	import { ClientList } from "$lib/global/clientList";
   import { clientList } from "../lib/clientListStore";
 
-  let clientRef: any;
-
   let currentClients: Array<String> = new Array();
+
   currentClients = ClientList.getInstance().getClientList();
   clientList.subscribe(value => {
     currentClients = value;
@@ -15,7 +14,7 @@
   <div class="clientHeader">
     Client list
   </div>
-  <div class="clientList" bind:this={clientRef}>
+  <div class="clientList">
     {#each currentClients as client}
       <div class="client">{client}</div>
     {/each}
@@ -26,9 +25,21 @@
   .clients {
     height: 100%;
     width: 100%;
+    
     display: grid;
     grid-area: users;
     align-content: start;
     justify-content: center;
+    text-align: center;
+  }
+
+  .clientHeader {
+    color: #EF233C;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .clientList {
+    overflow-y: auto;
   }
 </style>

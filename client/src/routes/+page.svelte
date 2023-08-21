@@ -5,20 +5,23 @@
 	import ClientList from "./clientList.svelte";
   import Prompt from "./prompt.svelte";
   import { Client } from "../lib/client";
+  import { userData } from "../lib/stores/store";
 
   const client = new Client;
-
   let nickname: string = '';
-
+  let data = '';
   let usrCreated: boolean = false;
+
+  client.createSocket();
+  nickname = client.getClientName();
+
+  userData.subscribe(value => {
+    data = value;
+  });
 </script>
 
 <div class="wrapper">
-  <div id="stars"></div>
-  <div id="stars2"></div>
-  <div id="stars3"></div>
-  
-  {#if nickname == '' || !usrCreated}
+  {#if data == ''}
     <Prompt client={client} bind:nickname={nickname} bind:usrCreated={usrCreated}/>
   {:else}
     <MainFooter/>
@@ -32,17 +35,14 @@
   @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
   .wrapper {
-    font-family: 'Roboto', sans-serif;
-    color: white;
-
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     position:fixed;
-    padding:0;
-    margin:0;
-
     top:0;
     left:0;
+
+    font-family: 'Roboto', sans-serif;
+    color: #2B2D42;
 
     display: grid;
     align-items: center;

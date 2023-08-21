@@ -4,12 +4,13 @@
   .footer {
     height: 100%;
     width: 100%;
+
+    font-size: 12px;
+
     display: grid;
     grid-area: footer;
-
     align-content: center;
     justify-content: end;
-    font-size: 12px;
   }
 
   .footer p {
