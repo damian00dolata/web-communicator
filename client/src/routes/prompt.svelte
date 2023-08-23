@@ -77,7 +77,7 @@
 			}
 			if (!passwordResult) {
 				addFormResponse(
-					'Password must be 8 characters or longer and have at least one alphanumeric character and a number.'
+					'Password must be 8 characters or longer and have at least one alphanumeric character and a number with no special characters.'
 				);
 			}
 		}
