@@ -35,7 +35,7 @@ class UserService:
     cur.execute(sql, (user.username,))
     exists = cur.fetchone()
     if exists:
-      sql = ''' SELECT password, isLogged FROM users WHERE username=? '''
+      sql = ''' SELECT password, isLogged, id, email FROM users WHERE username=? '''
       cur.execute(sql, (user.username,))
       password = user.password.encode('utf-8')
       res = cur.fetchone()
@@ -46,6 +46,8 @@ class UserService:
         return {"message":"User is already logged in."}
       if bcrypt.checkpw(password, dbPass):
         user.password = ''
+        user.id = res[2]
+        user.email = res[3]
         response.status_code = status.HTTP_200_OK
         return json.dumps(user, default=lambda o: o.__dict__)
       response.status_code = status.HTTP_403_FORBIDDEN
