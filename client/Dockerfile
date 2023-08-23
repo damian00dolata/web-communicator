@@ -14,3 +14,6 @@ RUN npm run build
 
 ENTRYPOINT ["node", "build"]
 EXPOSE 3000
+
+# FROM nginx:1.19-alpine
+# COPY --from=build /public /usr/share/nginx/html

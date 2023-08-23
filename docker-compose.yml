@@ -1,14 +1,14 @@
 services:
-  server:
-    container_name: server
+  web-comm-api:
+    container_name: web-comm-api
     restart: always
     build:
       context: ./server/
       dockerfile: Dockerfile
     ports:
       - 8000:8000
-  client:
-    container_name: client
+  web-comm-client:
+    container_name: web-comm-client
     restart: always
     build:
       context: ./client/

@@ -4,6 +4,8 @@ import { ClientList } from "./global/clientList";
 import { userId, lastRoomCreatedId, isRoomOpened } from "./stores/store";
 import { get } from 'svelte/store';
 
+const HOST = 'ws://localhost:8000';
+
 class Client {
   private clientName: string;
   private clientSocket: any = {};
@@ -42,7 +44,7 @@ class Client {
   }
 
   public createSocket() {
-    this.clientSocket = io('ws://localhost:8000', {'path':'/ws/socket.io'});
+    this.clientSocket = io(`${HOST}`, {'path':'/ws/socket.io'});
     this.setUpEvents();
   }
 
