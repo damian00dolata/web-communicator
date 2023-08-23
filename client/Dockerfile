@@ -12,5 +12,5 @@ RUN npm install -g npm@9.8.1
 RUN npm i --force
 RUN npm run build
 
-FROM nginx:1.19-alpine
-COPY --from=build /app/public /usr/share/nginx/html
+ENTRYPOINT ["node", "build"]
+EXPOSE 3000
