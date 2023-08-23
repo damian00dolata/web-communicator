@@ -7,11 +7,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:8000
-  # client:
-  #   container_name: client
-  #   restart: always
-  #   build:
-  #     context: ./client/
-  #     dockerfile: Dockerfile
-  #   ports:
-  #    - 5173:5173
+  client:
+    container_name: client
+    restart: always
+    build:
+      context: ./client/
+      dockerfile: Dockerfile
+    ports:
+     - 3000:3000
