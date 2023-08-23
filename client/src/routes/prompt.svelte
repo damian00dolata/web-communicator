@@ -69,7 +69,7 @@
         addFormResponse("Email must have a @ and a dot, domain can't be longer than 4 characters.");
       }
       if (!passwordResult) {
-        addFormResponse("Password must be 8 characters or longer and have at least one alphanumeric character and a number.");
+        addFormResponse("Password must be 8 characters or longer and have at least one alphanumeric character and a number with no special characters.");
       }
     }
   }
